@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum StatusLicitacao {
+  ANALISAR
+  APROVADA
+  DESCARTADA
+  DISPUTANDO
+}
+
+model Licitacao {
+  id                        String           @id @default(uuid())
+  numeroControlePNCP        String           @unique
+  objetoCompra              String
+  informacaoComplementar    String?
+  valorTotalEstimado        Decimal?         @db.Decimal(18, 2)
+  valorTotalHomologado      Decimal?         @db.Decimal(18, 2)
+  dataPublicacaoPncp        DateTime
+  dataAberturaProposta      DateTime?
+  dataEncerramentoProposta  DateTime?
+  orgaoCnpj                 String
+  orgaoRazaoSocial          String
+  unidadeNome               String?
+  unidadeUf                 String?
+  unidadeMunicipio          String?
+  modalidadeId              Int?
+  modalidadeNome            String?
+  modoDisputaNome           String?
+  situacaoCompraNome        String?
+  srp                       Boolean          @default(false)
+  linkSistemaOrigem         String?
+  linkProcessoEletronico    String?
+  anoCompra                 Int?
+  sequencialCompra          Int?
+  numeroCompra              String?
+  processo                  String?
+  status                    StatusLicitacao   @default(ANALISAR)
+  observacoes               String?
+  fonteOrigem               String           @default("PNCP")
+  idCompraGov               String?          @unique
+  createdAt                 DateTime         @default(now())
+  updatedAt                 DateTime         @updatedAt
+
+  @@index([status])
+  @@index([dataPublicacaoPncp])
+  @@index([orgaoCnpj])
+  @@index([fonteOrigem])
+  @@map("licitacoes")
+}
